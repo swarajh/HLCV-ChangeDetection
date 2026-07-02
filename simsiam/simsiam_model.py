@@ -6,58 +6,24 @@ import timm
 class SimSiam(nn.Module):
 
     def __init__(self):
-
         super().__init__()
-
-        self.encoder = timm.create_model(
-            "swin_tiny_patch4_window7_224",
-            pretrained=True,
-            num_classes=0
-        )
+        self.encoder = timm.create_model("swin_tiny_patch4_window7_224",pretrained=True,num_classes=0)
 
         self.projector = nn.Sequential(
-
-            nn.Linear(
-                768,
-                2048
-            ),
-
-            nn.BatchNorm1d(
-                2048
-            ),
-
+            nn.Linear(768,2048), # 768 -> 2048
+            nn.BatchNorm1d(2048),
             nn.ReLU(),
-
-            nn.Linear(
-                2048,
-                2048
-            ),
-
-            nn.BatchNorm1d(
-                2048
-            ),
-
+            nn.Linear(2048,2048), # 2048 -> 2048
+            nn.BatchNorm1d(2048),
             nn.ReLU(),
-
-            nn.Linear(
-                2048,
-                2048
-            )
+            nn.Linear(2048,2048) # 2048 -> 2048
         )
 
         self.predictor = nn.Sequential(
-
-            nn.Linear(
-                2048,
-                512
-            ),
-
+            # 2048 -> 512 -> 2048
+            nn.Linear(2048,512),
             nn.ReLU(),
-
-            nn.Linear(
-                512,
-                2048
-            )
+            nn.Linear(512,2048)
         )
 
     def forward(self, x1, x2):
