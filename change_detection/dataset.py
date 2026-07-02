@@ -14,7 +14,7 @@ class LevirDataset(Dataset):
         self.b_dir=os.path.join(root_dir,"B")
         self.label_dir=os.path.join(root_dir,"label")
         self.image_names=sorted(os.listdir(self.a_dir))
-        self.transform=transforms.Compose([transforms.Resize((224,224)),
+        self.transform=transforms.Compose([transforms.Resize((224,224)), # TODO: should be 256,256 for the baseline model
                                            transforms.ToTensor()])
 
     def __len__(self):
