@@ -1,13 +1,9 @@
+# TODO: Maybe we can have a single training script that takes a command line argument to specify which model to train (SimSiam or MIM). This would reduce code duplication and make it easier to maintain.
+
 import sys
 import os
 
-sys.path.append(
-    os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
-    )
-)
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
 import torch.nn as nn
@@ -21,87 +17,42 @@ from change_detection.swin_model_mim import (
 from change_detection.losses import DiceLoss
 
 
-print(
-    "Script started",
-    flush=True
-)
+print("Script started",flush=True)
 
 # -----------------------
 # Datasets
 # -----------------------
 
-print(
-    "Creating train dataset",
-    flush=True
-)
+print("Creating train dataset",flush=True)
 
-train_dataset = LevirDataset(
-    "datasets/LEVIR-CD/train"
-)
+train_dataset = LevirDataset("datasets/LEVIR-CD/train")
 
-print(
-    "Train dataset created",
-    flush=True
-)
+print("Train dataset created",flush=True)
 
-print(
-    "Train size:",
-    len(train_dataset),
-    flush=True
-)
+print("Train size:",len(train_dataset),flush=True)
 
-print(
-    "Creating val dataset",
-    flush=True
-)
+print("Creating val dataset",flush=True)
 
-val_dataset = LevirDataset(
-    "datasets/LEVIR-CD/val"
-)
+val_dataset = LevirDataset("datasets/LEVIR-CD/val")
 
-print(
-    "Val dataset created",
-    flush=True
-)
+print("Val dataset created",flush=True)
 
-print(
-    "Val size:",
-    len(val_dataset),
-    flush=True
-)
+print("Val size:",len(val_dataset),flush=True)
 
-train_loader = DataLoader(
-    train_dataset,
-    batch_size=4,
-    shuffle=True
-)
+train_loader = DataLoader(train_dataset,batch_size=4,shuffle=True)
 
-val_loader = DataLoader(
-    val_dataset,
-    batch_size=4,
-    shuffle=False
-)
+val_loader = DataLoader(val_dataset,batch_size=4,shuffle=False)
 
-print(
-    "Train loader created",
-    flush=True
-)
+print("Train loader created",flush=True)
 
-print(
-    "Number of train batches:",
-    len(train_loader),
-    flush=True
-)
+print("Number of train batches:",len(train_loader),flush=True)
 
 
 # -----------------------
 # Device
 # -----------------------
 
-print(
-    "Before device selection",
-    flush=True
-)
+print("Before device selection",flush=True)
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
@@ -110,108 +61,64 @@ elif torch.backends.mps.is_available():
 else:
     device = torch.device("cpu")
 
-print(
-    "Device selected",
-    flush=True
-)
+print("Device selected",flush=True)
 
-print(
-    "Using device:",
-    device,
-    flush=True
-)
+print("Using device:",device,flush=True)
 
 
 # -----------------------
 # Model
 # -----------------------
 
-print(
-    "Creating SimMIM model...",
-    flush=True
-)
+print("Creating SimMIM model...",flush=True)
 
-model = SwinChangeDetector(
-    pretrained=False,
-    mim_weights=
-    "checkpoints/mim_encoder.pth"
-)
+model = SwinChangeDetector(pretrained=False,mim_weights="checkpoints/mim_encoder.pth")
 
-print(
-    "Model object created",
-    flush=True
-)
+print("Model object created",flush=True)
 
 model = model.to(device)
 
-print(
-    "Model moved to device",
-    flush=True
-)
+print("Model moved to device",flush=True)
 
 
 # -----------------------
 # Losses
 # -----------------------
 
-print(
-    "Creating losses...",
-    flush=True
-)
+print("Creating losses...",flush=True)
 
 bce_loss = nn.BCEWithLogitsLoss()
 
 dice_loss = DiceLoss()
 
-print(
-    "Losses created",
-    flush=True
-)
+print("Losses created",flush=True)
 
 
 # -----------------------
 # Optimizer
 # -----------------------
 
-print(
-    "Creating optimizer...",
-    flush=True
-)
+print("Creating optimizer...",flush=True)
 
-optimizer = torch.optim.Adam(
-    model.parameters(),
-    lr=1e-4
-)
+optimizer = torch.optim.Adam(model.parameters(),lr=1e-4)
 
-print(
-    "Optimizer created",
-    flush=True
-)
+print("Optimizer created",flush=True)
 
 
 # -----------------------
 # Checkpoint Folder
 # -----------------------
 
-os.makedirs(
-    "checkpoints",
-    exist_ok=True
-)
+os.makedirs("checkpoints",exist_ok=True)
 
-print(
-    "Checkpoint directory ready",
-    flush=True
-)
+print("Checkpoint directory ready",flush=True)
 
 
 # -----------------------
 # Training
 # -----------------------
 
-print(
-    "Starting training...",
-    flush=True
-)
+print("Starting training...",flush=True)
 
 epochs = 30
 
@@ -219,42 +126,25 @@ best_loss = float("inf")
 
 for epoch in range(epochs):
 
-    print(
-        f"Starting Epoch {epoch+1}",
-        flush=True
-    )
+    print(f"Starting Epoch {epoch+1}",flush=True)
 
     model.train()
 
     running_loss = 0
 
-    for batch_idx, (
-        image_a,
-        image_b,
-        label
-    ) in enumerate(train_loader):
+    for batch_idx, (image_a,image_b,label) in enumerate(train_loader):
 
         if batch_idx == 0:
 
-            print(
-                "First batch loaded",
-                flush=True
-            )
+            print("First batch loaded",flush=True)
 
         image_a = image_a.to(device)
         image_b = image_b.to(device)
         label = label.to(device)
 
-        output = model(
-            image_a,
-            image_b
-        )
+        output = model(image_a,image_b)
 
-        loss = (
-            bce_loss(output, label)
-            +
-            dice_loss(output, label)
-        )
+        loss = (bce_loss(output, label)+dice_loss(output, label))
 
         optimizer.zero_grad()
 
@@ -264,33 +154,16 @@ for epoch in range(epochs):
 
         running_loss += loss.item()
 
-    avg_loss = (
-        running_loss
-        /
-        len(train_loader)
-    )
+    avg_loss = (running_loss/len(train_loader))
 
-    print(
-        f"Epoch {epoch+1}/{epochs} "
-        f"Loss: {avg_loss:.4f}",
-        flush=True
-    )
+    print(f"Epoch {epoch+1}/{epochs} " f"Loss: {avg_loss:.4f}",flush=True)
 
     if avg_loss < best_loss:
 
         best_loss = avg_loss
 
-        torch.save(
-            model.state_dict(),
-            "checkpoints/swin_mim.pth"
-        )
+        torch.save(model.state_dict(),"checkpoints/swin_mim.pth")
 
-        print(
-            "Best model saved!",
-            flush=True
-        )
+        print("Best model saved!",flush=True)
 
-print(
-    "Training finished!",
-    flush=True
-)
+print("Training finished!",flush=True)

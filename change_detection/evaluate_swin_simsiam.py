@@ -1,3 +1,5 @@
+# TODO: We can have one single evaluation file as the evaluation code is same.
+
 import torch
 
 from torch.utils.data import DataLoader
@@ -16,27 +18,13 @@ elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
 else:
     device = torch.device("cpu")
 
-dataset = LevirDataset(
-    "datasets/LEVIR-CD/val"
-)
+dataset = LevirDataset("datasets/LEVIR-CD/val")
 
-loader = DataLoader(
-    dataset,
-    batch_size=1,
-    shuffle=False
-)
+loader = DataLoader(dataset,batch_size=1,shuffle=False)
 
-model = SwinChangeDetector(
-    pretrained=False,
-    simsiam_weights=None
-)
+model = SwinChangeDetector(pretrained=False,simsiam_weights=None)
 
-model.load_state_dict(
-    torch.load(
-        "checkpoints/swin_simsiam.pth",
-        map_location=device
-    )
-)
+model.load_state_dict(torch.load("checkpoints/swin_simsiam.pth",map_location=device))
 
 model = model.to(device)
 print("Evaluating SimSiam model...", flush=True)
@@ -54,38 +42,21 @@ with torch.no_grad():
         img_b = img_b.to(device)
         mask = mask.to(device)
 
-        prediction = model(
-            img_a,
-            img_b
-        )
+        prediction = model(img_a,img_b)
 
-        prediction = torch.sigmoid(
-            prediction
-        )
+        prediction = torch.sigmoid(prediction)
 
-        prediction = (
-            prediction > 0.5
-        ).float()
+        prediction = (prediction > 0.5).float()
 
-        total_iou += compute_iou(
-            prediction,
-            mask
-        )
+        total_iou += compute_iou(prediction,mask)
 
-        total_f1 += compute_f1(
-            prediction,
-            mask
-        )
+        total_f1 += compute_f1(prediction,mask)
 
         num_samples += 1
 
 avg_iou = total_iou / num_samples
 avg_f1 = total_f1 / num_samples
 
-print(
-    f"Validation IoU: {avg_iou:.4f}"
-)
+print(f"Validation IoU: {avg_iou:.4f}")
 
-print(
-    f"Validation F1 : {avg_f1:.4f}"
-)
+print(f"Validation F1 : {avg_f1:.4f}")

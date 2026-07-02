@@ -14,35 +14,20 @@ from change_detection.losses import DiceLoss
 # Datasets
 # -----------------------
 
-train_dataset = LevirDataset(
-    "datasets/LEVIR-CD/train"
-)
+train_dataset = LevirDataset("datasets/LEVIR-CD/train")
 
-val_dataset = LevirDataset(
-    "datasets/LEVIR-CD/val"
-)
+val_dataset = LevirDataset("datasets/LEVIR-CD/val")
 
-train_loader = DataLoader(
-    train_dataset,
-    batch_size=4,
-    shuffle=True
-)
+train_loader = DataLoader(train_dataset,batch_size=4,shuffle=True)
 
-val_loader = DataLoader(
-    val_dataset,
-    batch_size=4,
-    shuffle=False
-)
+val_loader = DataLoader(val_dataset,batch_size=4,shuffle=False)
 
 
 # -----------------------
 # Device
 # -----------------------
 
-device = torch.device(
-    "mps" if torch.backends.mps.is_available()
-    else "cpu"
-)
+device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
 print("Using device:", device)
 
@@ -51,9 +36,7 @@ print("Using device:", device)
 # Model
 # -----------------------
 
-model = SwinChangeDetector(
-    pretrained=True
-)
+model = SwinChangeDetector(pretrained=True)
 
 model = model.to(device)
 
@@ -71,20 +54,14 @@ dice_loss = DiceLoss()
 # Optimizer
 # -----------------------
 
-optimizer = torch.optim.Adam(
-    model.parameters(),
-    lr=1e-4
-)
+optimizer = torch.optim.Adam(model.parameters(),lr=1e-4)
 
 
 # -----------------------
 # Checkpoint Folder
 # -----------------------
 
-os.makedirs(
-    "checkpoints",
-    exist_ok=True
-)
+os.makedirs("checkpoints",exist_ok=True)
 
 
 # -----------------------
@@ -105,16 +82,9 @@ for epoch in range(epochs):
         image_b = image_b.to(device)
         label = label.to(device)
 
-        output = model(
-            image_a,
-            image_b
-        )
+        output = model(image_a,image_b)
 
-        loss = (
-            bce_loss(output, label)
-            +
-            dice_loss(output, label)
-        )
+        loss = (bce_loss(output, label) + dice_loss(output, label))
 
         optimizer.zero_grad()
 
@@ -124,23 +94,11 @@ for epoch in range(epochs):
 
         running_loss += loss.item()
 
-    avg_loss = (
-        running_loss
-        /
-        len(train_loader)
-    )
+    avg_loss = (running_loss/len(train_loader))
 
-    print(
-        f"Epoch {epoch+1}/{epochs} "
-        f"Loss: {avg_loss:.4f}"
-    )
+    print(f"Epoch {epoch+1}/{epochs} " f"Loss: {avg_loss:.4f}")
 
 
-torch.save(
-    model.state_dict(),
-    "checkpoints/swin_baseline.pth"
-)
+torch.save(model.state_dict(),"checkpoints/swin_baseline.pth")
 
-print(
-    "Model saved!"
-)
+print("Model saved!")
