@@ -1,29 +1,17 @@
 import os
 import sys
 
-sys.path.append(
-    os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
-    )
-)
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
 
 from torch.utils.data import DataLoader
 
-from simsiam.eurosat_dataset import (
-    EuroSATSimSiamDataset
-)
+from simsiam.eurosat_dataset import (EuroSATSimSiamDataset)
 
-from simsiam.simsiam_model import (
-    SimSiam
-)
+from simsiam.simsiam_model import (SimSiam)
 
-from simsiam.simsiam_loss import (
-    simsiam_loss
-)
+from simsiam.simsiam_loss import (simsiam_loss)
 
 # --------------------
 # Device
@@ -42,9 +30,7 @@ print("Using device:", device)
 # Dataset
 # --------------------
 
-dataset = EuroSATSimSiamDataset(
-    "datasets/EuroSAT"
-)
+dataset = EuroSATSimSiamDataset("datasets/EuroSAT")
 
 loader = DataLoader(
     dataset,
@@ -67,10 +53,7 @@ model = model.to(device)
 # Optimizer
 # --------------------
 
-optimizer = torch.optim.AdamW(
-    model.parameters(),
-    lr=1e-4
-)
+optimizer = torch.optim.AdamW(model.parameters(),lr=1e-4)
 
 # --------------------
 # Training
@@ -80,10 +63,7 @@ epochs = 20
 
 best_loss = float("inf")
 
-os.makedirs(
-    "checkpoints",
-    exist_ok=True
-)
+os.makedirs("checkpoints",exist_ok=True)
 
 for epoch in range(epochs):
 
@@ -96,24 +76,11 @@ for epoch in range(epochs):
         view1 = view1.to(device)
         view2 = view2.to(device)
 
-        p1, p2, z1, z2 = model(
-            view1,
-            view2
-        )
-
-        loss = simsiam_loss(
-            p1,
-            p2,
-            z1,
-            z2
-        )
-
+        p1, p2, z1, z2 = model(view1,view2)
+        loss = simsiam_loss(p1,p2,z1,z2)
         optimizer.zero_grad()
-
         loss.backward()
-
         optimizer.step()
-
         running_loss += loss.item()
 
         if batch_idx % 100 == 0:
@@ -133,20 +100,9 @@ for epoch in range(epochs):
     )
 
     if avg_loss < best_loss:
-
         best_loss = avg_loss
+        torch.save(model.state_dict(),"checkpoints/simsiam_swin.pth")
 
-        torch.save(
-            model.state_dict(),
-            "checkpoints/simsiam_swin.pth"
-        )
+        torch.save(model.encoder.state_dict(),"checkpoints/simsiam_encoder.pth")
 
-        torch.save(
-            model.encoder.state_dict(),
-            "checkpoints/simsiam_encoder.pth"
-        )
-
-        print(
-            "Best model saved!",
-            flush=True
-        )
+        print("Best model saved!",flush=True)
