@@ -125,7 +125,7 @@ def main():
 
     # Training
     logger.info("Starting training...")
-    best_loss = float("inf")
+    best_val_loss = float("inf")
 
     for epoch in range(args.epochs):
         logger.info(f"--- Starting Epoch {epoch+1}/{args.epochs} ---")
@@ -150,13 +150,31 @@ def main():
             running_loss += loss.item()
 
         avg_loss = running_loss / len(train_loader)
-        logger.info(f"Epoch {epoch+1}/{args.epochs} Completed | Avg Loss: {avg_loss:.4f}")
 
+        # Validation Phase
+        model.eval()
+        running_val_loss = 0
+
+        for image_a, image_b, label in val_loader:
+            image_a = image_a.to(device)
+            image_b = image_b.to(device)
+            label = label.to(device)
+
+            with torch.no_grad():
+                output = model(image_a, image_b)
+                val_loss = bce_loss(output, label) + dice_loss(output, label)
+                running_val_loss += val_loss.item()
+        
+        avg_val_loss = running_val_loss / len(val_loader)
+
+        logger.info(f"Epoch {epoch+1}/{args.epochs} Completed | Train Loss: {avg_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
+
+        # =========================
         # Unified best-model saving logic
-        if avg_loss < best_loss:
-            best_loss = avg_loss
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
             torch.save(model.state_dict(), save_path)
-            logger.info(f"New best model saved to {save_path}! (Loss: {best_loss:.4f})")
+            logger.info(f"New best model saved to {save_path}! (Loss: {best_val_loss:.4f})")
 
         scheduler.step()
 
