@@ -14,7 +14,7 @@ VAL_PATH="datasets/LEVIR-CD/val"
 # Path definitions
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
-TRAIN_SCRIPT="train.py"
+TRAIN_SCRIPT="/change_detection/train.py"
 
 # Navigate to the project directory
 cd "$PROJECT_DIR" || { echo "Failed to change directory to $PROJECT_DIR"; exit 1; }
