@@ -178,6 +178,19 @@ def main():
 
         scheduler.step()
 
+    # Saving the metrics to CSV to find the best model later 
+    csv_folder = "csv_results"
+    os.makedirs(csv_folder, exist_ok=True)
+    csv_file = os.path.join(csv_folder, "experiment_results.csv")
+    file_exists = os.path.isfile(csv_file)
+    
+    with open(csv_file, "a") as f:
+        if not file_exists:
+            f.write("Timestamp,Model_Type,Epochs,Batch_Size,Best_Val_Loss,Checkpoint_Path\n")
+        
+        # Write the data for this run
+        f.write(f"{timestamp},{args.model_type},{args.epochs},{args.batch_size},{best_val_loss:.4f},{save_path}\n")
+
     logger.info("Training finished!")
 
 if __name__ == "__main__":
