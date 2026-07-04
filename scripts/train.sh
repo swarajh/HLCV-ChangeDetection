@@ -3,7 +3,7 @@
 # ==========================================
 # EXPERIMENT CONFIGURATION
 # ==========================================
-MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "baseline"
+MODEL_TYPE="mim"           # Options: "mim", "simsiam", "baseline"
 BATCH_SIZE=4
 EPOCHS=30
 
