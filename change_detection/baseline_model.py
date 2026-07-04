@@ -33,9 +33,8 @@ class SiameseBaseline(nn.Module):
         encoded_b=self.encoder(image_b)
 
         diff=torch.abs(encoded_a-encoded_b)
-
+        target_size = image_a.size()[2:]  # Get the height and width of the input images
         out=self.decoder(diff)
 
-        
-        out=torch.nn.functional.interpolate(out, size=(256,256), mode="bilinear", align_corners=False)
+        out=torch.nn.functional.interpolate(out, size=target_size, mode="bilinear", align_corners=False)
         return out
