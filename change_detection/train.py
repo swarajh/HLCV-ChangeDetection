@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument(
         "--model_type", 
         type=str, 
-        choices=["mim", "simsiam", "baseline"], 
+        choices=["mim", "simsiam", "sim","baseline"], 
         required=True,
         help="Specify which model variant to train."
     )
@@ -73,8 +73,10 @@ def main():
         from change_detection.swin_model_mim import SwinChangeDetector
     elif args.model_type == "simsiam":
         from change_detection.swin_model_simsiam import SwinChangeDetector
-    elif args.model_type == "baseline":
+    elif args.model_type == "sim":
         from change_detection.swin_model import SwinChangeDetector
+    elif args.model_type == "baseline":
+        from change_detection.baseline_model import SiameseBaseline
     else:
         raise ValueError(f"Invalid model type: {args.model_type}")
 
@@ -110,8 +112,10 @@ def main():
         model = SwinChangeDetector(pretrained=False, mim_weights="checkpoints/mim_encoder.pth")
     elif args.model_type == "simsiam":
         model = SwinChangeDetector(pretrained=False, simsiam_weights="checkpoints/simsiam_encoder.pth")
-    elif args.model_type == "baseline":
+    elif args.model_type == "sim":
         model = SwinChangeDetector(pretrained=True)
+    elif args.model_type == "baseline":
+        model = SiameseBaseline()
     model = model.to(device)
 
     # Losses & Optimizer
