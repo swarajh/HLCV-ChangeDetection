@@ -116,6 +116,12 @@ def main():
     # --------------------
     logger.info("Creating SimSiam model...")
     model = SimSiam(model_name=args.model_name)
+
+    # If multiple GPUs are available
+    if torch.cuda.device_count() > 1:
+        logger.info(f"Let's use {torch.cuda.device_count()} GPUs!")
+        model = torch.nn.DataParallel(model)
+
     model = model.to(device)
 
     # --------------------
@@ -190,11 +196,11 @@ def main():
         # Save best model logic
         if avg_loss < best_loss:
             best_loss = avg_loss
-            
+            base_model = model.module if isinstance(model, torch.nn.DataParallel) else model
             # Save the full SimSiam model
-            torch.save(model.state_dict(), best_model_path)
+            torch.save(base_model.state_dict(), best_model_path)
             # Save JUST the encoder (for downstream tasks like Change Detection)
-            torch.save(model.encoder.state_dict(), best_encoder_path)
+            torch.save(base_model.encoder.state_dict(), best_encoder_path)
             
             logger.info(f"New best model saved! (Loss: {best_loss:.4f})")
             logger.info(f"-> Full model: {best_model_path}")
