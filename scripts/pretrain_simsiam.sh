@@ -9,7 +9,7 @@ MODEL_NAME="swin_tiny_patch4_window7_224"
 
 # Hyperparameters
 BATCH_SIZE=64
-EPOCHS=2
+EPOCHS=100
 BASE_LR=0.05
 NUM_WORKERS=4
 
