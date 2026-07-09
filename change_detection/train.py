@@ -24,6 +24,12 @@ def parse_args():
         help="Specify which model variant to train."
     )
     parser.add_argument(
+        "--encoder_weights",
+        type=str,
+        default=None,
+        help="Path to pretrained encoder weights (if any)."
+    )
+    parser.add_argument(
         "--batch_size", 
         type=int, 
         default=4, 
@@ -79,6 +85,14 @@ def main():
         from change_detection.baseline_model import SiameseBaseline
     else:
         raise ValueError(f"Invalid model type: {args.model_type}")
+    
+    # Set Default encoder weights if not provided
+    if args.encoder_weights is None:
+        if args.model_type == "mim":
+            args.encoder_weights = "checkpoints/mim_encoder.pth"
+        elif args.model_type == "simsiam":
+            args.encoder_weights = "checkpoints/simsiam_encoder_swin_tiny_patch4_window7_224_bs64.pth"
+        logger.info(f"No encoder weights provided. Using default: {args.encoder_weights}")
 
     # Datasets
     logger.info("Creating datasets...")
@@ -109,9 +123,9 @@ def main():
     save_path = f"checkpoints/swin_{args.model_type}_{timestamp}.pth"
     
     if args.model_type == "mim":
-        model = SwinChangeDetector(pretrained=False, mim_weights="checkpoints/mim_encoder.pth")
+        model = SwinChangeDetector(pretrained=False, mim_weights=args.encoder_weights)
     elif args.model_type == "simsiam":
-        model = SwinChangeDetector(pretrained=False, simsiam_weights="checkpoints/simsiam_encoder.pth")
+        model = SwinChangeDetector(pretrained=False, simsiam_weights=args.encoder_weights)
     elif args.model_type == "sim":
         model = SwinChangeDetector(pretrained=True)
     elif args.model_type == "baseline":

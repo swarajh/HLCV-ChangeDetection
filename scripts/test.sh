@@ -3,7 +3,7 @@
 # ==========================================
 # EVALUATION CONFIGURATION
 # ==========================================
-MODEL_TYPE="mim"           # Options: "mim", "simsiam", "sim", "baseline"
+MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
 BATCH_SIZE=1
 
 # Path to the test dataset
