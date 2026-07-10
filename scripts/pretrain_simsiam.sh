@@ -5,7 +5,7 @@
 # ==========================================
 # Data and Model
 DATA_PATH="datasets/EuroSAT"
-MODEL_NAME="swin_tiny_patch4_window7_224"
+MODEL_NAME="swin_small_patch4_window7_224.ms_in22k"
 
 # Hyperparameters
 BATCH_SIZE=64
