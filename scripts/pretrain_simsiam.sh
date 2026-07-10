@@ -9,10 +9,10 @@ MODEL_NAME="swin_small_patch4_window7_224.ms_in22k"
 
 # Hyperparameters
 BATCH_SIZE=64
-EPOCHS=1
+EPOCHS=100
 BASE_LR=0.05
 NUM_WORKERS=4
-TO_SAVE=false
+TO_SAVE=true
 
 # ==========================================
 # PATH DEFINITIONS
