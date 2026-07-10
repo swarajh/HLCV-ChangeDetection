@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from torch.amp import GradScaler, autocast
+from torch.cuda.amp import GradScaler,autocast
 
 from simsiam.eurosat_dataset import EuroSATSimSiamDataset
 from simsiam.simsiam_model import SimSiam
