@@ -1,4 +1,4 @@
-import os
+import sys,os
 import argparse
 import torch
 import torch.nn as nn
@@ -6,6 +6,8 @@ from torch.utils.data import TensorDataset, DataLoader
 from tqdm import tqdm
 from simsiam.simsiam_loss import simsiam_loss
 from feature_extractor import main as extract_features
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class SimSiamMLP(nn.Module):
     def __init__(self, in_dim):
