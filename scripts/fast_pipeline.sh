@@ -5,7 +5,7 @@
 # ==========================================
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
-TRAIN_SCRIPT="change_detection/ssl.py"
+TRAIN_SCRIPT="change_detection/ssl_training.py"
 
 # ==========================================
 # ARGUMENTS
