@@ -27,7 +27,7 @@ cd "$PROJECT_DIR" || { echo "Failed to change directory to $PROJECT_DIR"; exit 1
 # ==========================================
 # RUN THE SCRIPT
 # ==========================================
-"$CONDA_PYTHON" "$SSL_SCRIPT" \
+"$CONDA_PYTHON" "$TRAIN_SCRIPT" \
     --features_path "$FEATURES_PATH" \
     --method "$METHOD" \
     --batch_size "$BATCH_SIZE" \
