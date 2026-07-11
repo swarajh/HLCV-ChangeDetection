@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from torch.cuda.amp import GradScaler,autocast
 
 from simsiam.eurosat_dataset import EuroSATSimSiamDataset
 from simsiam.simsiam_model import SimSiam
@@ -53,6 +54,12 @@ def parse_args():
         default=0, 
         help="Number of workers for data loading."
     )
+    parser.add_argument(
+        "--to_save",
+        type=bool,
+        default=True,
+        help="Whether to save the best model and encoder checkpoints."
+    )
     return parser.parse_args()
 
 
@@ -90,6 +97,7 @@ def main():
     logger.info("Selecting device...")
     if torch.cuda.is_available():
         device = torch.device("cuda")
+        torch.backends.cudnn.benchmark = True  # Enable cudnn auto-tuner for better performance
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         device = torch.device("mps")
     else:
@@ -162,6 +170,7 @@ def main():
     # --------------------
     logger.info("Starting training...")
     best_loss = float("inf")
+    scaler = GradScaler()  # For mixed precision training
 
     for epoch in range(args.epochs):
         current_lr = optimizer.param_groups[0]["lr"]
@@ -177,12 +186,14 @@ def main():
             view1 = view1.to(device)
             view2 = view2.to(device)
 
-            p1, p2, z1, z2 = model(view1, view2)
-            loss = simsiam_loss(p1, p2, z1, z2)
+            with autocast():
+                p1, p2, z1, z2 = model(view1, view2)
+                loss = simsiam_loss(p1, p2, z1, z2)
             
             optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
             
             running_loss += loss.item()
             
@@ -194,7 +205,7 @@ def main():
         logger.info(f"Epoch {epoch+1}/{args.epochs} Completed | Avg Loss: {avg_loss:.4f}")
 
         # Save best model logic
-        if avg_loss < best_loss:
+        if avg_loss < best_loss and args.to_save:
             best_loss = avg_loss
             base_model = model.module if isinstance(model, torch.nn.DataParallel) else model
             # Save the full SimSiam model

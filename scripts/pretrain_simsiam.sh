@@ -5,13 +5,14 @@
 # ==========================================
 # Data and Model
 DATA_PATH="datasets/EuroSAT"
-MODEL_NAME="swin_tiny_patch4_window7_224"
+MODEL_NAME="swin_small_patch4_window7_224.ms_in22k"
 
 # Hyperparameters
 BATCH_SIZE=64
 EPOCHS=100
 BASE_LR=0.05
 NUM_WORKERS=4
+TO_SAVE=true
 
 # ==========================================
 # PATH DEFINITIONS
@@ -36,4 +37,5 @@ echo "=========================================="
     --batch_size "$BATCH_SIZE" \
     --epochs "$EPOCHS" \
     --base_lr "$BASE_LR" \
-    --num_workers "$NUM_WORKERS"
+    --num_workers "$NUM_WORKERS" \
+    --to_save "$TO_SAVE"

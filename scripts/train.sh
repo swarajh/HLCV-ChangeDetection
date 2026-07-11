@@ -6,7 +6,7 @@
 MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
 BATCH_SIZE=4
 EPOCHS=30
-ENCODER_WEIGHTS="checkpoints/simsiam_encoder_swin_tiny_patch4_window7_224_bs64.pth" 
+ENCODER_WEIGHTS="checkpoints/simsiam_encoder_swin_small_patch4_window7_224.ms_in22k_bs64.pth" 
 # Look into the checkpoints directory for other encoder weights in the cluster.
 
 TRAIN_PATH="datasets/LEVIR-CD/train"
