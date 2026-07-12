@@ -95,9 +95,9 @@ def setup_logger(model_type, method, timestamp):
 
 def main():
     args = parse_args()
-    
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    logger = setup_logger(args.method, timestamp=timestamp)
+    logger = setup_logger(args.model_name, args.method, timestamp=timestamp)
 
     features_path = f"features/features_{args.model_name.replace('/', '_')}.pt"
     if not os.path.exists(features_path):
