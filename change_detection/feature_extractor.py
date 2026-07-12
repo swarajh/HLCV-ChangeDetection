@@ -35,7 +35,7 @@ def main(data_path=None,
     model_name="swin_tiny_patch4_window7_224",
     batch_size=128,
     num_workers=4,
-    output_dir="precomputed_features",
+    output_dir="features",
     ):
     
     os.makedirs(output_dir, exist_ok=True)
