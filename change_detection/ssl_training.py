@@ -71,6 +71,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Train MLP Heads on Precomputed Features")
     parser.add_argument("--method", type=str, choices=["simsiam", "mim"], required=True)
     parser.add_argument("--batch_size", type=int, default=512, help="Can be massive now!")
+    parser.add_argument("--extraction_bs", type=int, default=8, help="Batch size used during feature extraction")
     parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--base_lr", type=float, default=0.01)
     parser.add_argument("--data_path", type=str, required=True, help="Path to the dataset for feature extraction")
@@ -102,7 +103,7 @@ def main():
     features_path = f"features/features_{args.model_name.replace('/', '_')}.pt"
     if not os.path.exists(features_path):
         logger.info(f"Features not found at {features_path}. Extracting features...")
-        extract_features(model_name=args.model_name, data_path=args.data_path, output_dir=args.output_dir, batch_size=args.batch_size) 
+        extract_features(model_name=args.model_name, data_path=args.data_path, output_dir=args.output_dir, batch_size=args.extraction_bs) 
     else:
         logger.info(f"Features already exist at {features_path}. Skipping extraction.")
 
