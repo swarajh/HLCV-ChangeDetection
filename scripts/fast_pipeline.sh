@@ -11,7 +11,7 @@ TRAIN_SCRIPT="change_detection/ssl_training.py"
 # ARGUMENTS
 # ==========================================
 
-METHOD="mim"  # Choose between "simsiam" or "mim"
+METHOD="simsiam"  # Choose between "simsiam" or "mim"
 BATCH_SIZE=512  # Batch size for training
 EPOCHS=200  # Number of epochs
 BASE_LR=0.05  # Base learning rate
