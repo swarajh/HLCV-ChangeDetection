@@ -79,7 +79,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    features_path = f"features_{args.model_name.replace('/', '_')}.pt"
+    features_path = f"features/features_{args.model_name.replace('/', '_')}.pt"
     if not os.path.exists(features_path):
         print(f"Features not found at {features_path}. Extracting features...")
         extract_features(model_name=args.model_name, data_path=args.data_path, output_dir=args.output_dir, batch_size=args.batch_size) 
