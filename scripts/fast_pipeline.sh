@@ -10,7 +10,7 @@ TRAIN_SCRIPT="change_detection/ssl_training.py"
 # ==========================================
 # ARGUMENTS
 # ==========================================
-FEATURES_PATH="features/precomputed_features.pt"  # Path to the saved .pt file
+
 METHOD="simsiam"  # Choose between "simsiam" or "mim"
 BATCH_SIZE=512  # Batch size for training
 EPOCHS=200  # Number of epochs

@@ -68,7 +68,6 @@ class LatentMIM_MLP(nn.Module):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train MLP Heads on Precomputed Features")
-    parser.add_argument("--features_path", type=str, required=True, help="Path to the saved .pt file")
     parser.add_argument("--method", type=str, choices=["simsiam", "mim"], required=True)
     parser.add_argument("--batch_size", type=int, default=512, help="Can be massive now!")
     parser.add_argument("--epochs", type=int, default=200)
@@ -80,17 +79,17 @@ def parse_args():
 
 def main():
     args = parse_args()
-
-    if not os.path.exists(args.features_path):
-        print(f"Features not found at {args.features_path}. Extracting features...")
+    features_path = f"features_{args.model_name.replace('/', '_')}.pt"
+    if not os.path.exists(features_path):
+        print(f"Features not found at {features_path}. Extracting features...")
         extract_features(model_name=args.model_name, data_path=args.data_path, output_dir=args.output_dir, batch_size=args.batch_size) 
     else:
-        print(f"Features already exist at {args.features_path}. Skipping extraction.")
+        print(f"Features already exist at {features_path}. Skipping extraction.")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    print(f"Loading precomputed features from {args.features_path}...")
-    data = torch.load(args.features_path, map_location="cpu")
+    print(f"Loading precomputed features from {features_path}...")
+    data = torch.load(features_path, map_location="cpu")
     v1_features, v2_features = data['view1'], data['view2']
     
     # Automatically determine feature dimension (768 for Swin, 384 for DINOv2)
