@@ -49,8 +49,8 @@ def main(data_path=None,
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    print("Loading Dataset...") 
-    dataset = EuroSATSimSiamDataset(data_path)
+    print("Loading Dataset...")
+    dataset = EuroSATSimSiamDataset(data_path,model_name=model_name)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     print(f"Loading Frozen Backbone: {model_name}...")
