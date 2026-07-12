@@ -128,7 +128,7 @@ def main():
         lr = args.base_lr * (args.batch_size / 256)
     elif args.method == "mim":
         model = LatentMIM_MLP(in_dim=in_dim).to(device)
-        mim_criterion = nn.MSELoss()
+        mim_criterion = nn.SmoothL1Loss()
 
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=0)
