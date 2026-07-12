@@ -83,7 +83,7 @@ def main():
 
     if not os.path.exists(args.features_path):
         print(f"Features not found at {args.features_path}. Extracting features...")
-        extract_features()
+        extract_features(model_name=args.model_name, data_path=args.data_path, output_dir=args.output_dir, batch_size=args.batch_size) 
     else:
         print(f"Features already exist at {args.features_path}. Skipping extraction.")
 

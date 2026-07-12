@@ -10,33 +10,38 @@ from tqdm import tqdm
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from simsiam.eurosat_dataset import EuroSATSimSiamDataset
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Extract and Save Backbone Features")
-    parser.add_argument("--data_path", 
-                        type=str, 
-                        required=True, 
-                        help="Path to EuroSAT")
-    parser.add_argument("--model_name", 
-                        type=str, 
-                        default="swin_tiny_patch4_window7_224")
-    parser.add_argument("--batch_size", 
-                        type=int, 
-                        default=128, 
-                        help="Batch size for extraction")
-    parser.add_argument("--num_workers", 
-                        type=int, 
-                        default=4)
-    parser.add_argument("--output_dir",
-                         type=str,
-                        default="precomputed_features")
-    return parser.parse_args()
+# def parse_args():
+#     parser = argparse.ArgumentParser(description="Extract and Save Backbone Features")
+#     parser.add_argument("--data_path", 
+#                         type=str, 
+#                         required=True, 
+#                         help="Path to EuroSAT")
+#     parser.add_argument("--model_name", 
+#                         type=str, 
+#                         default="swin_tiny_patch4_window7_224")
+#     parser.add_argument("--batch_size", 
+#                         type=int, 
+#                         default=128, 
+#                         help="Batch size for extraction")
+#     parser.add_argument("--num_workers", 
+#                         type=int, 
+#                         default=4)
+#     parser.add_argument("--output_dir",
+#                          type=str,
+#                         default="precomputed_features")
+#     return parser.parse_args()
 
-def main():
-    args = parse_args()
-    os.makedirs(args.output_dir, exist_ok=True)
+def main(data_path=None,
+    model_name="swin_tiny_patch4_window7_224",
+    batch_size=128,
+    num_workers=4,
+    output_dir="precomputed_features",
+    ):
+    
+    os.makedirs(output_dir, exist_ok=True)
     
     # Check if the output file already exists
-    save_path = os.path.join(args.output_dir, f"features_{args.model_name.replace('/', '_')}.pt")
+    save_path = os.path.join(output_dir, f"features_{model_name.replace('/', '_')}.pt")
     if os.path.exists(save_path):
         print(f"Features already exist at: {save_path}. Skipping extraction.")
         return  # Exit the script if the file already exists
@@ -44,13 +49,13 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    print("Loading Dataset...")
-    dataset = EuroSATSimSiamDataset(args.data_path)
-    loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
+    print("Loading Dataset...") 
+    dataset = EuroSATSimSiamDataset(data_path)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
-    print(f"Loading Frozen Backbone: {args.model_name}...")
+    print(f"Loading Frozen Backbone: {model_name}...")
     # num_classes=0 removes the classification head, returning the raw 1D feature vector
-    model = timm.create_model(args.model_name, pretrained=True, num_classes=0)
+    model = timm.create_model(model_name, pretrained=True, num_classes=0)
         
     model = model.to(device)
     model.eval()  # Freeze dropout/batchnorm
