@@ -1,6 +1,7 @@
 import sys,os
 import argparse
-
+import logging
+from datetime import datetime
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
@@ -77,24 +78,43 @@ def parse_args():
     parser.add_argument("--output_dir", type=str, default="features", help="Directory to save extracted features")
     return parser.parse_args()
 
+def setup_logger(model_type, method, timestamp):
+    """Sets up logging"""
+    os.makedirs("logs", exist_ok=True)
+    log_filename = f"logs/pre_train_{model_type}_{method}_{timestamp}.log"
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler(log_filename),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+    return logging.getLogger(__name__)
+
 def main():
     args = parse_args()
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    logger = setup_logger(args.method, timestamp=timestamp)
+
     features_path = f"features/features_{args.model_name.replace('/', '_')}.pt"
     if not os.path.exists(features_path):
-        print(f"Features not found at {features_path}. Extracting features...")
+        logger.info(f"Features not found at {features_path}. Extracting features...")
         extract_features(model_name=args.model_name, data_path=args.data_path, output_dir=args.output_dir, batch_size=args.batch_size) 
     else:
-        print(f"Features already exist at {features_path}. Skipping extraction.")
+        logger.info(f"Features already exist at {features_path}. Skipping extraction.")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    print(f"Loading precomputed features from {features_path}...")
+    logger.info(f"Loading precomputed features from {features_path}...")
     data = torch.load(features_path, map_location="cpu")
     v1_features, v2_features = data['view1'], data['view2']
     
     # Automatically determine feature dimension (768 for Swin, 384 for DINOv2)
     in_dim = v1_features.shape[1]
-    print(f"Loaded {len(v1_features)} samples with feature dimension {in_dim}.")
+    logger.info(f"Loaded {len(v1_features)} samples with feature dimension {in_dim}.")
 
     # Create an ultra-fast Tensor DataLoader (No images, just vectors!)
     dataset = TensorDataset(v1_features, v2_features)
@@ -112,7 +132,7 @@ def main():
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=0)
 
-    print(f"Starting {args.method.upper()} Training for {args.epochs} Epochs...")
+    logger.info(f"Starting {args.method.upper()} Training for {args.epochs} Epochs...")
     
     os.makedirs("checkpoints", exist_ok=True)
     best_loss = float("inf")
@@ -149,9 +169,9 @@ def main():
             torch.save(model.state_dict(), save_path)
 
         if (epoch + 1) % 20 == 0 or epoch == 0:
-            print(f"Epoch [{epoch+1}/{args.epochs}] | Avg Loss: {avg_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f}")
+            logger.info(f"Epoch [{epoch+1}/{args.epochs}] | Avg Loss: {avg_loss:.4f} | LR: {scheduler.get_last_lr()[0]:.6f}")
 
-    print(f"Training Complete! Best model saved to: {save_path}")
+    logger.info(f"Training Complete! Best model saved to: {save_path}")
 
 if __name__ == "__main__":
     main()
