@@ -16,7 +16,7 @@ BATCH_SIZE=512  # Batch size for training
 EPOCHS=200  # Number of epochs
 BASE_LR=0.05  # Base learning rate
 DATA_PATH="datasets/EuroSAT"  # Path to the dataset for feature extraction
-MODEL_NAME="swin_large_patch4_window7_224"  # Backbone model name
+MODEL_NAME="vit_large_patch14_dinov2.lvd142m"  # Backbone model name
 OUTPUT_DIR="features"  # Directory to save extracted features
 EXTRACTION_BS=8
 
