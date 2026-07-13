@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import timm
+from ssl_training import Projector
 
 
 class SwinChangeDetector(nn.Module):
@@ -124,5 +125,97 @@ class SwinChangeDetector(nn.Module):
         out = self.decoder(fused)
 
         out = F.interpolate(out,size=(224, 224),mode="bilinear",align_corners=False)
+
+        return out
+
+class SwinProjectorChangeDetector(nn.Module):
+    def __init__(self,model_name,projector_weights,freeze_backbone=True):
+        super().__init__()
+        self.backbone = timm.create_model(model_name,pretrained=True,features_only=True)
+        self.projector = Projector(768)
+        ckpt = torch.load(projector_weights, map_location="cpu")
+
+        projector_state = {
+            k.replace("projector.", ""): v
+            for k, v in ckpt.items()
+            if k.startswith("projector.")
+        }
+
+        self.projector.load_state_dict(projector_state)
+
+        if freeze_backbone:
+            for p in self.backbone.parameters():
+                p.requires_grad = False
+        
+        self.fusion = nn.Sequential(
+            nn.Conv2d(96 + 192 + 384 + 2048, 512, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(512, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+        )
+
+        self.decoder = nn.Sequential(
+            nn.Conv2d(256, 64, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 1, kernel_size=1),
+        )
+    
+    def forward(self,image_a, image_b):
+        features_a = self.backbone(image_a)
+        features_b = self.backbone(image_b)
+
+        diffs = []
+
+        for i, (fa, fb) in enumerate(zip(features_a, features_b)):
+
+            fa = fa.permute(0, 3, 1, 2)
+            fb = fb.permute(0, 3, 1, 2)
+
+            # Apply the SimSiam projector only on the final stage
+            if i == 3:
+                B, C, H, W = fa.shape
+
+                fa = fa.flatten(2).transpose(1, 2)      # (B,49,768)
+                fb = fb.flatten(2).transpose(1, 2)
+
+                fa = self.projector(
+                    fa.reshape(-1, C)
+                ).reshape(B, H * W, -1)
+
+                fb = self.projector(
+                    fb.reshape(-1, C)
+                ).reshape(B, H * W, -1)
+
+                fa = fa.transpose(1, 2).reshape(B, 2048, H, W)
+                fb = fb.transpose(1, 2).reshape(B, 2048, H, W)
+
+            diff = torch.abs(fa - fb)
+            diffs.append(diff)
+
+        target_size = diffs[0].shape[-2:]
+
+        diffs = [
+            d if d.shape[-2:] == target_size
+            else F.interpolate(
+                d,
+                size=target_size,
+                mode="bilinear",
+                align_corners=False,
+            )
+            for d in diffs
+        ]
+
+        fused = torch.cat(diffs, dim=1)
+
+        fused = self.fusion(fused)
+
+        out = self.decoder(fused)
+
+        out = F.interpolate(
+            out,
+            size=(224, 224),
+            mode="bilinear",
+            align_corners=False,
+        )
 
         return out

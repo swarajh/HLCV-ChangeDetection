@@ -41,6 +41,10 @@ def parse_args():
         default=30, 
         help="Number of training epochs."
     )
+    parser.add_argument(
+        "--model_name",
+        type=str,
+    )
     parser.add_argument("--train_path", type=str, required=True, help="Path to training dataset.")
     parser.add_argument("--val_path", type=str, required=True, help="Path to validation dataset.")
     return parser.parse_args()
@@ -78,7 +82,7 @@ def main():
     if args.model_type == "mim":
         from change_detection.swin_model_mim import SwinChangeDetector
     elif args.model_type == "simsiam":
-        from change_detection.swin_model_simsiam import SwinChangeDetector
+        from change_detection.swin_model_simsiam import SwinChangeDetector, SwinProjectorChangeDetector
     elif args.model_type == "sim":
         from change_detection.swin_model import SwinChangeDetector
     elif args.model_type == "baseline":
@@ -125,7 +129,12 @@ def main():
     if args.model_type == "mim":
         model = SwinChangeDetector(pretrained=False, mim_weights=args.encoder_weights)
     elif args.model_type == "simsiam":
-        model = SwinChangeDetector(pretrained=False, simsiam_weights=args.encoder_weights)
+        if "mlp.pth" in args.encoder_weights:
+            model = SwinProjectorChangeDetector(model_name=args.model_name,
+                                                projector_weights=args.encoder_weights,
+                                                freeze_backbone=True)
+        else:
+            model = SwinChangeDetector(pretrained=False, simsiam_weights=args.encoder_weights)
     elif args.model_type == "sim":
         model = SwinChangeDetector(pretrained=True)
     elif args.model_type == "baseline":
@@ -136,7 +145,7 @@ def main():
     logger.info("Creating losses and optimizer...")
     bce_loss = nn.BCEWithLogitsLoss()
     dice_loss = DiceLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), filter(lambda p: p.requires_grad, model.parameters()),lr=1e-4)
 
     # Learning Rate Scheduler
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
