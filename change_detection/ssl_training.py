@@ -12,7 +12,7 @@ from simsiam.simsiam_loss import simsiam_loss
 from feature_extractor import main as extract_features
 
 
-class Projector(nn.Module):
+class Projector(nn.Sequential):
  
 
     def __init__(self, in_dim):
