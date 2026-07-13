@@ -14,7 +14,7 @@ DATA_PATH="datasets/LEVIR-CD/test"
 CHECKPOINT_PATH="checkpoints/swin_simsiam_20260713_204422.pth" 
 # Example: CHECKPOINT_PATH="checkpoints/swin_baseline_20231024_120000.pth"
 # ==========================================
-
+MODEL_NAME="swin_tiny_patch4_window7_224"
 # Path definitions
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
@@ -26,7 +26,7 @@ cd "$PROJECT_DIR" || { echo "Failed to change directory to $PROJECT_DIR"; exit 1
 echo "Starting evaluation for model: $MODEL_TYPE"
 echo "Batch Size: $BATCH_SIZE | Data Path: $DATA_PATH"
 
-CMD="$CONDA_PYTHON $EVAL_SCRIPT --model_type $MODEL_TYPE --data_path $DATA_PATH --batch_size $BATCH_SIZE"
+CMD="$CONDA_PYTHON $EVAL_SCRIPT --model_type $MODEL_TYPE --data_path $DATA_PATH --batch_size $BATCH_SIZE --model_name $MODEL_NAME"
 
 # Add the checkpoint argument if it was provided
 if [ -n "$CHECKPOINT_PATH" ]; then
