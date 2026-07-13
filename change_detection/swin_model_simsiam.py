@@ -133,15 +133,17 @@ class SwinProjectorChangeDetector(nn.Module):
         super().__init__()
         self.backbone = timm.create_model(model_name,pretrained=True,features_only=True)
         self.projector = Projector(768)
-        ckpt = torch.load(projector_weights, map_location="cpu")
 
-        projector_state = {
-            k.replace("projector.", ""): v
-            for k, v in ckpt.items()
-            if k.startswith("projector.")
-        }
+        if projector_weights is not None:
+            ckpt = torch.load(projector_weights, map_location="cpu")
 
-        self.projector.load_state_dict(projector_state)
+            projector_state = {
+                k.replace("projector.", ""): v
+                for k, v in ckpt.items()
+                if k.startswith("projector.")
+            }
+
+            self.projector.load_state_dict(projector_state)
 
         if freeze_backbone:
             for p in self.backbone.parameters():
