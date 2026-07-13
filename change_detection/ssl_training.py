@@ -27,9 +27,6 @@ class Projector(nn.Sequential):
             nn.BatchNorm1d(2048),
             )
     
-    def forward(self, x):
-        return self.net(x)
-    
 class SimSiamMLP(nn.Module):
     def __init__(self, in_dim):
         super().__init__()
