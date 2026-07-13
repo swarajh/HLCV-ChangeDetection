@@ -13,19 +13,19 @@ from feature_extractor import main as extract_features
 
 
 class Projector(nn.Module):
-    def __init__(self,x):
-        super().__init__()
+ 
 
-        self.net = nn.Sequential(
-            nn.Linear(x, 2048, bias=False),
+    def __init__(self, in_dim):
+        super().__init__(
+            nn.Linear(in_dim, 2048, bias=False),
             nn.BatchNorm1d(2048),
             nn.ReLU(),
             nn.Linear(2048, 2048, bias=False),
             nn.BatchNorm1d(2048),
             nn.ReLU(),
             nn.Linear(2048, 2048, bias=False),
-            nn.BatchNorm1d(2048)
-        )
+            nn.BatchNorm1d(2048),
+            )
     
     def forward(self, x):
         return self.net(x)
