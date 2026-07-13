@@ -145,7 +145,7 @@ def main():
     logger.info("Creating losses and optimizer...")
     bce_loss = nn.BCEWithLogitsLoss()
     dice_loss = DiceLoss()
-    optimizer = torch.optim.Adam(model.parameters(), filter(lambda p: p.requires_grad, model.parameters()),lr=1e-4)
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),lr=1e-4)
 
     # Learning Rate Scheduler
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
