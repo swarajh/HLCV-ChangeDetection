@@ -133,6 +133,7 @@ def main():
             model = SwinProjectorChangeDetector(model_name=args.model_name,
                                                 projector_weights=args.encoder_weights,
                                                 freeze_backbone=True)
+            save_path = f"checkpoints/swin_{args.model_type}_projector_{timestamp}.pth"
         else:
             model = SwinChangeDetector(pretrained=False, simsiam_weights=args.encoder_weights)
     elif args.model_type == "sim":

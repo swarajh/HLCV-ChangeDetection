@@ -63,6 +63,10 @@ def parse_args():
         default=1, 
         help="Batch size for evaluation."
     )
+    parser.add_argument(
+        "--model_name",
+        type=str,
+    )
     return parser.parse_args()
 
 def setup_logger(model_type, timestamp):
@@ -124,8 +128,15 @@ def main():
         # We set mim_weights=None because we are loading a fully trained checkpoint
         model = SwinChangeDetector(pretrained=False, mim_weights=None)
     elif args.model_type == "simsiam":
-        from change_detection.swin_model_simsiam import SwinChangeDetector
-        model = SwinChangeDetector(pretrained=False, simsiam_weights=None)
+        if "projector" in checkpoint_path.lower():
+            logger.info("Detected encoder checkpoint. Using SwinProjectorChangeDetector for evaluation.")
+            from change_detection.swin_model_simsiam import SwinProjectorChangeDetector
+            model = SwinProjectorChangeDetector(model_name=args.model_name,
+                                                projector_weights=None,
+                                                freeze_backbone=False)
+        else:
+            from change_detection.swin_model_simsiam import SwinChangeDetector
+            model = SwinChangeDetector(pretrained=False, simsiam_weights=None)
     elif args.model_type == "sim":
         from change_detection.swin_model import SwinChangeDetector
         model = SwinChangeDetector(pretrained=False)
