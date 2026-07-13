@@ -11,13 +11,14 @@ TRAIN_SCRIPT="change_detection/ssl_training.py"
 # ARGUMENTS
 # ==========================================
 
-METHOD="mim"  # Choose between "simsiam" or "mim"
+METHOD="simsiam"  # Choose between "simsiam" or "mim"
 BATCH_SIZE=512  # Batch size for training
 EPOCHS=200  # Number of epochs
 BASE_LR=0.05  # Base learning rate
 DATA_PATH="datasets/EuroSAT"  # Path to the dataset for feature extraction
-MODEL_NAME="swin_tiny_patch4_window7_224"  # Backbone model name
+MODEL_NAME="vit_large_patch14_dinov2.lvd142m"  # Backbone model name
 OUTPUT_DIR="features"  # Directory to save extracted features
+EXTRACTION_BS=8
 
 # ==========================================
 # NAVIGATE TO PROJECT DIRECTORY
@@ -30,6 +31,7 @@ cd "$PROJECT_DIR" || { echo "Failed to change directory to $PROJECT_DIR"; exit 1
 "$CONDA_PYTHON" "$TRAIN_SCRIPT" \
     --method "$METHOD" \
     --batch_size "$BATCH_SIZE" \
+    --extraction_bs "$EXTRACTION_BS" \
     --epochs "$EPOCHS" \
     --base_lr "$BASE_LR" \
     --data_path "$DATA_PATH" \
