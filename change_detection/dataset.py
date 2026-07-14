@@ -8,13 +8,13 @@ from torchvision import transforms
 
 
 class LevirDataset(Dataset):
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, image_size=224):
         self.root_dir=root_dir
         self.a_dir=os.path.join(root_dir,"A")
         self.b_dir=os.path.join(root_dir,"B")
         self.label_dir=os.path.join(root_dir,"label")
         self.image_names=sorted(os.listdir(self.a_dir))
-        self.transform=transforms.Compose([transforms.Resize((224,224)), # TODO: should be 256,256 for the baseline model
+        self.transform=transforms.Compose([transforms.Resize((image_size,image_size)), 
                                            transforms.ToTensor()])
 
     def __len__(self):
