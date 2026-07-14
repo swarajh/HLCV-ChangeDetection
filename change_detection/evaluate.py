@@ -115,9 +115,12 @@ def main():
         device = torch.device("cpu")
     logger.info(f"Using device: {device}")
 
+    image_size = 224  # Default image size for Swin models
+    if "dinov2" in args.model_name:
+        image_size = 518
     # 2. Dataset & DataLoader
     logger.info("Creating test dataset...")
-    dataset = LevirDataset(args.data_path)
+    dataset = LevirDataset(args.data_path, image_size=image_size)
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
     logger.info(f"Dataset size: {len(dataset)} | Number of batches: {len(loader)}")
 
@@ -128,10 +131,16 @@ def main():
         # We set mim_weights=None because we are loading a fully trained checkpoint
         model = SwinChangeDetector(pretrained=False, mim_weights=None)
     elif args.model_type == "simsiam":
-        if "projector" in checkpoint_path.lower():
+        if "projector" in checkpoint_path.lower() and "swin" in checkpoint_path.lower():
             logger.info("Detected encoder checkpoint. Using SwinProjectorChangeDetector for evaluation.")
             from change_detection.swin_model_simsiam import SwinProjectorChangeDetector
             model = SwinProjectorChangeDetector(model_name=args.model_name,
+                                                projector_weights=None,
+                                                freeze_backbone=False)
+        elif "projector" in checkpoint_path.lower() and "dino" in checkpoint_path.lower():
+            logger.info("Detected encoder checkpoint. Using DINOProjectorChangeDetector for evaluation.")
+            from change_detection.dino_model_simsiam import DINOProjectorChangeDetector
+            model = DINOProjectorChangeDetector(model_name=args.model_name,
                                                 projector_weights=None,
                                                 freeze_backbone=False)
         else:
