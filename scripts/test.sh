@@ -11,7 +11,7 @@ DATA_PATH="datasets/LEVIR-CD/test"
 
 # Optional: If you want to test a specific checkpoint, set the path below.
 # If left empty (""), the python script will automatically fetch the best one from the CSV!
-CHECKPOINT_PATH="checkpoints/vit_large_patch14_dinov2.lvd142m_simsiam_projector_20260714_091630.pt" 
+CHECKPOINT_PATH="checkpoints/vit_large_patch14_dinov2.lvd142m_simsiam_projector_20260714_091630.pth" 
 # Example: CHECKPOINT_PATH="checkpoints/swin_baseline_20231024_120000.pth"
 # ==========================================
 MODEL_NAME="vit_large_patch14_dinov2.lvd142m"
