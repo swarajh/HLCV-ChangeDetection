@@ -12,11 +12,11 @@ from simsiam.simsiam_loss import simsiam_loss
 from feature_extractor import main as extract_features
 
 
+class Projector(nn.Sequential):
+ 
 
-class SimSiamMLP(nn.Module):
     def __init__(self, in_dim):
-        super().__init__()
-        self.projector = nn.Sequential(
+        super().__init__(
             nn.Linear(in_dim, 2048, bias=False),
             nn.BatchNorm1d(2048),
             nn.ReLU(),
@@ -24,8 +24,13 @@ class SimSiamMLP(nn.Module):
             nn.BatchNorm1d(2048),
             nn.ReLU(),
             nn.Linear(2048, 2048, bias=False),
-            nn.BatchNorm1d(2048)
-        )
+            nn.BatchNorm1d(2048),
+            )
+    
+class SimSiamMLP(nn.Module):
+    def __init__(self, in_dim):
+        super().__init__()
+        self.projector = Projector(in_dim)
         self.predictor = nn.Sequential(
             nn.Linear(2048, 512, bias=False),
             nn.BatchNorm1d(512),

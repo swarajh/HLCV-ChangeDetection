@@ -6,7 +6,8 @@
 MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
 BATCH_SIZE=4
 EPOCHS=30
-ENCODER_WEIGHTS="checkpoints/simsiam_encoder_swin_small_patch4_window7_224.ms_in22k_bs64.pth" 
+ENCODER_WEIGHTS="checkpoints/best_swin_large_patch4_window7_224_simsiam_mlp.pth" 
+MODEL_NAME="swin_large_patch4_window7_224"
 # Look into the checkpoints directory for other encoder weights in the cluster.
 
 TRAIN_PATH="datasets/LEVIR-CD/train"
@@ -27,6 +28,7 @@ echo "Batch Size: $BATCH_SIZE | Epochs: $EPOCHS"
 # Execute the training script using the variables defined above
 "$CONDA_PYTHON" "$TRAIN_SCRIPT" \
     --model_type "$MODEL_TYPE" \
+    --model_name "$MODEL_NAME" \
     --encoder_weights "$ENCODER_WEIGHTS" \
     --batch_size "$BATCH_SIZE" \
     --epochs "$EPOCHS" \
