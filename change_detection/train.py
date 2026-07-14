@@ -83,6 +83,7 @@ def main():
         from change_detection.swin_model_mim import SwinChangeDetector
     elif args.model_type == "simsiam":
         from change_detection.swin_model_simsiam import SwinChangeDetector, SwinProjectorChangeDetector
+        from change_detection.dino_model_simsiam import DINOProjectorChangeDetector
     elif args.model_type == "sim":
         from change_detection.swin_model import SwinChangeDetector
     elif args.model_type == "baseline":
@@ -129,10 +130,13 @@ def main():
     if args.model_type == "mim":
         model = SwinChangeDetector(pretrained=False, mim_weights=args.encoder_weights)
     elif args.model_type == "simsiam":
-        if "mlp.pth" in args.encoder_weights:
+        if "mlp.pth" in args.encoder_weights and "swin" in args.encoder_weights:
             model = SwinProjectorChangeDetector(model_name=args.model_name,
                                                 projector_weights=args.encoder_weights,
                                                 freeze_backbone=True)
+            save_path = f"checkpoints/{args.model_name}_{args.model_type}_projector_{timestamp}.pth"
+        elif "mlp.pth" in args.encoder_weights and "dinov2" in args.encoder_weights:
+            model = DINOProjectorChangeDetector(model_name=args.model_name,projector_weights=args.encoder_weights,freeze_backbone=True)
             save_path = f"checkpoints/{args.model_name}_{args.model_type}_projector_{timestamp}.pth"
         else:
             model = SwinChangeDetector(pretrained=False, simsiam_weights=args.encoder_weights)
