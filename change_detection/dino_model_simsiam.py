@@ -79,5 +79,5 @@ class DINOProjectorChangeDetector(nn.Module):
 
         out = self.decoder(diff)
 
-        out = F.interpolate(out,size=(224,224),mode="bilinear",align_corners=False)
+        out = F.interpolate(out,size=(518,518),mode="bilinear",align_corners=False)
         return out
