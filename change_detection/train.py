@@ -124,7 +124,7 @@ def main():
 
     # Model
     logger.info(f"Creating {args.model_type} model...")
-    save_path = f"checkpoints/swin_{args.model_type}_{timestamp}.pth"
+    save_path = f"checkpoints/{args.model_name}_{args.model_type}_{timestamp}.pth"
     
     if args.model_type == "mim":
         model = SwinChangeDetector(pretrained=False, mim_weights=args.encoder_weights)
@@ -133,7 +133,7 @@ def main():
             model = SwinProjectorChangeDetector(model_name=args.model_name,
                                                 projector_weights=args.encoder_weights,
                                                 freeze_backbone=True)
-            save_path = f"checkpoints/swin_{args.model_type}_projector_{timestamp}.pth"
+            save_path = f"checkpoints/{args.model_name}_{args.model_type}_projector_{timestamp}.pth"
         else:
             model = SwinChangeDetector(pretrained=False, simsiam_weights=args.encoder_weights)
     elif args.model_type == "sim":
