@@ -11,10 +11,10 @@ DATA_PATH="datasets/LEVIR-CD/test"
 
 # Optional: If you want to test a specific checkpoint, set the path below.
 # If left empty (""), the python script will automatically fetch the best one from the CSV!
-CHECKPOINT_PATH="checkpoints/swin_simsiam_projector_20260713_204422.pth" 
+CHECKPOINT_PATH="checkpoints/swin_large_patch4_window7_224_simsiam_projector_20260714_074216.pth" 
 # Example: CHECKPOINT_PATH="checkpoints/swin_baseline_20231024_120000.pth"
 # ==========================================
-MODEL_NAME="swin_tiny_patch4_window7_224"
+MODEL_NAME="swin_large_patch4_window7_224"
 # Path definitions
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
