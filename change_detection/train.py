@@ -99,10 +99,13 @@ def main():
             args.encoder_weights = "checkpoints/simsiam_encoder_swin_tiny_patch4_window7_224_bs64.pth"
         logger.info(f"No encoder weights provided. Using default: {args.encoder_weights}")
 
+    image_size = 224  # Default image size for Swin models
+    if "dinov2" in args.model_name:
+        image_size = 518
     # Datasets
     logger.info("Creating datasets...")
-    train_dataset = LevirDataset(args.train_path)
-    val_dataset = LevirDataset(args.val_path)
+    train_dataset = LevirDataset(args.train_path,image_size=image_size)
+    val_dataset = LevirDataset(args.val_path,image_size=image_size)
 
     logger.info(f"Train size: {len(train_dataset)} | Val size: {len(val_dataset)}")
 
