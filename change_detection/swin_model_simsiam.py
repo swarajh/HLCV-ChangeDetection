@@ -132,7 +132,8 @@ class SwinProjectorChangeDetector(nn.Module):
     def __init__(self,model_name,projector_weights,freeze_backbone=True):
         super().__init__()
         self.backbone = timm.create_model(model_name,pretrained=True,features_only=True)
-        self.projector = Projector(768)
+        channels = self.backbone.feature_info.channels()
+        self.projector = Projector(channels[-1])
 
         if projector_weights is not None:
             ckpt = torch.load(projector_weights, map_location="cpu")
@@ -149,8 +150,10 @@ class SwinProjectorChangeDetector(nn.Module):
             for p in self.backbone.parameters():
                 p.requires_grad = False
         
+        fusion_in = channels[0] + channels[1] + channels[2] + 2048
+        
         self.fusion = nn.Sequential(
-            nn.Conv2d(96 + 192 + 384 + 2048, 512, kernel_size=3, padding=1),
+            nn.Conv2d(fusion_in, 512, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 256, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
