@@ -6,8 +6,8 @@
 MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
 BATCH_SIZE=4
 EPOCHS=30
-ENCODER_WEIGHTS="checkpoints/best_vit_large_patch14_dinov2.lvd142m_simsiam_mlp.pth" 
-MODEL_NAME="vit_large_patch14_dinov2.lvd142m"
+ENCODER_WEIGHTS="none" 
+MODEL_NAME="vit_base_patch14_dinov2.lvd142m"
 # Look into the checkpoints directory for other encoder weights in the cluster.
 
 TRAIN_PATH="datasets/LEVIR-CD/train"

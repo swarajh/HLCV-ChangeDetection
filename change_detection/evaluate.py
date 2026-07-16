@@ -143,6 +143,11 @@ def main():
             model = DINOProjectorChangeDetector(model_name=args.model_name,
                                                 projector_weights=None,
                                                 freeze_backbone=False)
+        elif "lora" in checkpoint_path.lower() and "dino" in checkpoint_path.lower():
+            from change_detection.dino_model_simsiam import DINOLoRAProjectorChangeDetector
+            model = DINOLoRAProjectorChangeDetector(model_name=args.model_name,
+                                                    projector_weights=None,
+                                                    freeze_backbone=False)
         else:
             from change_detection.swin_model_simsiam import SwinChangeDetector
             model = SwinChangeDetector(pretrained=False, simsiam_weights=None)
