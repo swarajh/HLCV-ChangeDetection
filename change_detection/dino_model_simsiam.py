@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import timm
+from peft import LoraConfig, get_peft_model
 
 from ssl_training import Projector
 
@@ -81,3 +82,33 @@ class DINOProjectorChangeDetector(nn.Module):
 
         out = F.interpolate(out,size=(518,518),mode="bilinear",align_corners=False)
         return out
+
+class DINOLoRAProjectorChangeDetector(DINOProjectorChangeDetector):
+    def __init__(
+            self,
+            model_name="vit_large_patch14_dinov2.lvd142m",
+            projector_weights=None,
+            freeze_backbone=False,
+            lora_r=16,
+            lora_alpha=16,
+            lora_dropout=0.5
+    ):
+        super().__init__(model_name=model_name,projector_weights=None,freeze_backbone=False)
+
+        lora_config = LoraConfig(
+            r=lora_r,
+            lora_alpha=lora_alpha,
+            target_modules=["qkv"],
+            lora_dropout=lora_dropout,
+            bias="none"
+        )
+
+        self.backbone = get_peft_model(self.backbone,lora_config)
+
+        print("\n--- LoRA Backbone Parameters ---")
+        self.backbone.print_trainable_parameters()
+
+        total_decoder_params = sum(p.numel() for p in self.decoder.parameters() if p.requires_grad)
+        total_projector_params = sum(p.numel() for p in self.projector.parameters() if p.requires_grad)
+        print(f"Decoder Trainable Params: {total_decoder_params:,}")
+        print(f"Projector Trainable Params: {total_projector_params:,}")
