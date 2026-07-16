@@ -106,7 +106,6 @@ def main():
     else:
         checkpoint_path = args.checkpoint
 
-    # 1. Device Selection
     if torch.cuda.is_available():
         device = torch.device("cuda")
     elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
@@ -118,13 +117,12 @@ def main():
     image_size = 224  # Default image size for Swin models
     if "dinov2" in args.model_name:
         image_size = 518
-    # 2. Dataset & DataLoader
+
     logger.info("Creating test dataset...")
     dataset = LevirDataset(args.data_path, image_size=image_size)
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
     logger.info(f"Dataset size: {len(dataset)} | Number of batches: {len(loader)}")
 
-    # 3. Dynamic Model Initialization
     logger.info("Creating model...")
     if args.model_type == "mim":
         from change_detection.swin_model_mim import SwinChangeDetector
@@ -174,7 +172,6 @@ def main():
     model = model.to(device)
     model.eval()
 
-    # 4. Evaluation Loop
     logger.info("Starting evaluation...")
     total_iou = 0.0
     total_f1 = 0.0
@@ -212,7 +209,6 @@ def main():
                 "Avg F1": f"{(total_f1 / num_samples):.4f}"
             })
 
-    # 5. Final Metrics Calculation
     avg_iou = total_iou / num_samples
     avg_f1 = total_f1 / num_samples
 
