@@ -149,6 +149,12 @@ def main():
 
     with torch.no_grad():
         prediction = model(batch_img_a, batch_img_b)
+        print("img_a      :", img_a.shape)
+        print("img_b      :", img_b.shape)
+        print("batch_img_a:", batch_img_a.shape)
+        print("batch_img_b:", batch_img_b.shape)
+        print("mask       :", mask.shape)
+        print("prediction :", prediction.shape)
         
         if prediction.shape[2:] != mask.shape:
             prediction = torch.nn.functional.interpolate(
