@@ -193,7 +193,7 @@ def main():
 
     plt.tight_layout()
     
-    save_filename = os.path.join(args.output_dir, f"vis_{args.model_name}_idx{idx}_{checkpoint_path}.png")
+    save_filename = os.path.join(args.output_dir, f"vis_idx{idx}_{checkpoint_path}.png")
     plt.savefig(save_filename, dpi=150, bbox_inches='tight')
     plt.close()
     
