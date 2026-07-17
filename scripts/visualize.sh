@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
+MODEL_TYPE="baseline"           # Options: "mim", "simsiam", "sim", "baseline"
 
 # Path to the test dataset
 DATA_PATH="datasets/LEVIR-CD/test"
 
-CHECKPOINT_PATH="checkpoints/vit_base_patch14_dinov2.lvd142m_simsiam_lora_20260716_154943.pth" 
+CHECKPOINT_PATH="checkpoints/swin_baseline_20260717_120902.pth" 
 
-MODEL_NAME="vit_base_patch14_dinov2.lvd142m"
+MODEL_NAME="swin"
 # Path definitions
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
