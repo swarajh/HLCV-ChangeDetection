@@ -109,7 +109,7 @@ def main():
     img_a, img_b, mask = dataset[idx]
 
     logger.info(f"Recreating {args.model_type.upper()} architecture...")
-    checkpoint_path = os.path.splitext(os.path.basename(checkpoint_path))[0]
+    checkpoint_path = os.path.splitext(os.path.basename(args.checkpoint))[0]
     
     if args.model_type == "mim":
         from change_detection.swin_model_mim import SwinChangeDetector
