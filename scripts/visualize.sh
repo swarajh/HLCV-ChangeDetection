@@ -7,7 +7,7 @@ DATA_PATH="datasets/LEVIR-CD/test"
 
 CHECKPOINT_PATH="checkpoints/vit_base_patch14_dinov2.lvd142m_simsiam_lora_20260716_154943.pth" 
 
-MODEL_NAME="swin"
+MODEL_NAME="vit_base_patch14_dinov2.lvd142m"
 # Path definitions
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
