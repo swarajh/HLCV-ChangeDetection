@@ -109,7 +109,7 @@ def main():
     img_a, img_b, mask = dataset[idx]
 
     logger.info(f"Recreating {args.model_type.upper()} architecture...")
-    checkpoint_path = args.checkpoint
+    checkpoint_path = os.path.splitext(os.path.basename(checkpoint_path))[0]
     
     if args.model_type == "mim":
         from change_detection.swin_model_mim import SwinChangeDetector
@@ -136,10 +136,11 @@ def main():
     else:
         raise ValueError(f"Invalid model type: {args.model_type}")
 
-    logger.info(f"Loading weights from {checkpoint_path}...")
-    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
+    logger.info(f"Loading weights from {args.checkpoint}...")
+    model.load_state_dict(torch.load(args.checkpoint, map_location=device))
     model = model.to(device)
     model.eval()
+
 
 
     logger.info("Executing forward pass...")
