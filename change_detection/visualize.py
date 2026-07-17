@@ -156,9 +156,12 @@ def main():
         print("mask       :", mask.shape)
         print("prediction :", prediction.shape)
         
-        if prediction.shape[2:] != mask.shape:
+        if prediction.shape[-2:] != mask.shape[-2:]:
             prediction = torch.nn.functional.interpolate(
-                prediction, size=mask.shape, mode='bilinear', align_corners=False
+                prediction,
+                size=mask.shape[-2:],
+                mode="bilinear",
+                align_corners=False,
             )
         
         prediction = torch.sigmoid(prediction)
