@@ -5,9 +5,9 @@ MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
 # Path to the test dataset
 DATA_PATH="datasets/LEVIR-CD/test"
 
-CHECKPOINT_PATH="checkpoints/swin_large_patch4_window7_224_simsiam_projector_20260714_074216.pth" 
+CHECKPOINT_PATH="checkpoints/swin_simsiam_20260704_130101.pth" 
 
-MODEL_NAME="swin_large_patch4_window7_224"
+MODEL_NAME="swin"
 # Path definitions
 PROJECT_DIR="/home/hlcv_team007/HLCV-ChangeDetection/"
 CONDA_PYTHON="/home/hlcv_team007/miniconda3/envs/hlcv/bin/python"
