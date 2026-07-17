@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-MODEL_TYPE="sim"           # Options: "mim", "simsiam", "sim", "baseline"
+MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
 
 # Path to the test dataset
 DATA_PATH="datasets/LEVIR-CD/test"
 
-CHECKPOINT_PATH="checkpoints/swin_sim_20260717_142056.pth" 
+CHECKPOINT_PATH="vit_base_patch14_dinov2.lvd142m_simsiam_lora_20260716_154943.pth" 
 
 MODEL_NAME="swin"
 # Path definitions
