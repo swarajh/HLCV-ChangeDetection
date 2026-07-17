@@ -3,11 +3,11 @@
 # ==========================================
 # EXPERIMENT CONFIGURATION
 # ==========================================
-MODEL_TYPE="simsiam"           # Options: "mim", "simsiam", "sim", "baseline"
+MODEL_TYPE="baseline"           # Options: "mim", "simsiam", "sim", "baseline"
 BATCH_SIZE=4
 EPOCHS=30
 ENCODER_WEIGHTS="none" 
-MODEL_NAME="vit_base_patch14_dinov2.lvd142m"
+MODEL_NAME="swin"
 # Look into the checkpoints directory for other encoder weights in the cluster.
 
 TRAIN_PATH="datasets/LEVIR-CD/train"
