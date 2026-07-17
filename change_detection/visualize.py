@@ -167,7 +167,7 @@ def main():
         prediction = torch.sigmoid(prediction)
         pred_mask = (prediction > 0.5).float().squeeze(0).squeeze(0).cpu().numpy()
 
-    gt_mask = mask.cpu().numpy()
+    gt_mask = mask.squeeze(0).cpu().numpy()
 
     img_a_np = img_a.permute(1, 2, 0).cpu().numpy()
     img_b_np = img_b.permute(1, 2, 0).cpu().numpy()
