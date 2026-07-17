@@ -103,7 +103,7 @@ def main():
     dataset = LevirDataset(args.data_path, image_size=image_size)
 
 
-    idx = random.randint(0, len(dataset) - 1)
+    idx = 35 #fixed now for comparison
     logger.info(f"Picking a random index to visualize: {idx}")
 
     img_a, img_b, mask = dataset[idx]
