@@ -169,14 +169,16 @@ def main():
 
     gt_mask = mask.cpu().numpy()
 
+    img_a_np = img_a.permute(1, 2, 0).cpu().numpy()
+    img_b_np = img_b.permute(1, 2, 0).cpu().numpy()
     # Create the comparison figure
     fig, axes = plt.subplots(1, 4, figsize=(18, 5))
     
-    axes[0].imshow(img_a)
+    axes[0].imshow(img_a_np)
     axes[0].set_title("Image A (T1)")
     axes[0].axis("off")
     
-    axes[1].imshow(img_b)
+    axes[1].imshow(img_b_np)
     axes[1].set_title("Image B (T2)")
     axes[1].axis("off")
     
